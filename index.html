@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Учебная тренировка</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      line-height: 1.6;
+      color: #1f2430;
+      background: #f4f6fa;
+    }
+
+    .page {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px 18px;
+      box-shadow: 0 1px 4px rgba(20, 30, 60, 0.12);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 1.5rem;
+      line-height: 1.3;
+      color: #173049;
+    }
+
+    .meta p {
+      margin: 6px 0;
+      font-size: 1rem;
+    }
+
+    .meta .label {
+      color: #5a6474;
+    }
+
+    ul.exercises {
+      margin: 18px 0 0;
+      padding-left: 22px;
+    }
+
+    ul.exercises li {
+      margin: 8px 0;
+      font-size: 1.05rem;
+    }
+
+    .button {
+      display: inline-block;
+      margin-top: 22px;
+      padding: 12px 22px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #ffffff;
+      background: #2f6df6;
+      border: none;
+      border-radius: 10px;
+      text-decoration: none;
+    }
+
+    .entry {
+      margin-top: 20px;
+    }
+
+    .entry p.current {
+      margin: 0 0 12px;
+      font-weight: 600;
+      font-size: 1.05rem;
+    }
+
+    .entry label {
+      display: block;
+      margin-top: 12px;
+      font-size: 0.95rem;
+      color: #5a6474;
+    }
+
+    .entry input {
+      width: 100%;
+      margin-top: 4px;
+      padding: 10px 12px;
+      font-size: 1.05rem;
+      font-family: inherit;
+      color: #1f2430;
+      background: #ffffff;
+      border: 1px solid #c6cddd;
+      border-radius: 8px;
+    }
+
+    h3.recorded-title {
+      margin: 26px 0 0;
+      font-size: 1.15rem;
+      color: #173049;
+    }
+
+    ul.recorded {
+      margin: 8px 0 0;
+      padding-left: 22px;
+    }
+
+    ul.recorded li {
+      margin: 8px 0;
+      font-size: 1.05rem;
+    }
+
+    .msg {
+      margin: 14px 0 0;
+      color: #b3261e;
+    }
+
+    #summary p {
+      margin: 10px 0;
+    }
+
+    button:disabled,
+    input:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .hist {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid #e2e7ee;
+    }
+
+    .hist p {
+      margin: 0 0 6px;
+    }
+
+    .round-title {
+      margin: 12px 0 0;
+      font-weight: 600;
+    }
+
+    .stepper {
+      display: flex;
+      align-items: stretch;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .stepper-btn {
+      flex: 0 0 auto;
+      width: 48px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      font-family: inherit;
+      color: #173049;
+      background: #eef2f9;
+      border: 1px solid #c6cddd;
+      border-radius: 8px;
+    }
+
+    .stepper input {
+      flex: 1 1 auto;
+      min-width: 0;
+      margin-top: 0;
+    }
+
+    .entry input[type="range"] {
+      margin-top: 6px;
+      padding: 0;
+      border: none;
+      background: transparent;
+    }
+
+    .table-wrap {
+      margin-top: 14px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    table.overview {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 460px;
+    }
+
+    .overview th,
+    .overview td {
+      padding: 8px 10px;
+      border: 1px solid #e2e7ee;
+      white-space: nowrap;
+      text-align: center;
+      font-size: 0.95rem;
+    }
+
+    .overview th:first-child,
+    .overview td:first-child {
+      text-align: left;
+      white-space: normal;
+      min-width: 130px;
+      max-width: 220px;
+    }
+
+    .overview thead th {
+      background: #f2f5fa;
+    }
+
+    @media (max-width: 360px) {
+      .page {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .card {
+        padding: 16px 14px;
+      }
+
+      h1 {
+        font-size: 1.35rem;
+      }
+
+      .button {
+        display: block;
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="card">
+      <h1>Учебная тренировка</h1>
+
+      <div class="meta">
+        <p><span class="label">Дата:</span> 19 октября 2026</p>
+        <p><span class="label">Тип тренировки:</span> Верх</p>
+      </div>
+
+      <div id="picker">
+        <p>Выберите шаблон тренировки:</p>
+        <button class="button" type="button" onclick="startTraining('Верх')">Верх</button>
+        <button class="button" type="button" onclick="startTraining('Низ')">Низ</button>
+      </div>
+
+      <div class="entry">
+        <p class="current">Шаблон: <span id="template">—</span></p>
+        <p class="current">Текущий круг: <span id="round">1</span></p>
+        <p>Активное упражнение: <span id="active">—</span></p>
+
+        <label for="weight">Вес, кг</label>
+        <div class="stepper">
+          <button class="stepper-btn" type="button" onclick="stepValue('weight', -1)" disabled>−</button>
+          <input id="weight" type="number" inputmode="numeric" min="0" step="1" disabled>
+          <button class="stepper-btn" type="button" onclick="stepValue('weight', 1)" disabled>+</button>
+        </div>
+
+        <label for="reps">Повторения</label>
+        <div class="stepper">
+          <button class="stepper-btn" type="button" onclick="stepValue('reps', -1)" disabled>−</button>
+          <input id="reps" type="number" inputmode="numeric" min="0" step="1" disabled>
+          <button class="stepper-btn" type="button" onclick="stepValue('reps', 1)" disabled>+</button>
+        </div>
+
+        <p class="current">Трудность: <span id="effort-value">5</span></p>
+        <input id="diff" type="range" min="1" max="10" step="1" value="5" disabled
+               oninput="document.getElementById('effort-value').textContent = this.value">
+
+        <button id="set" class="button" type="button" onclick="finishApproach()" disabled>Завершить подход</button>
+        <button id="roundfinish" class="button" type="button" onclick="finishRoundEarly()" disabled>Завершить круг</button>
+        <button id="finish" class="button" type="button" onclick="finishTraining()">Завершить тренировку</button>
+        <p id="msg" class="msg" hidden>Сначала завершите текущий круг.</p>
+      </div>
+
+      <h3 class="recorded-title" id="list-title">Записанные подходы</h3>
+      <ul id="list" class="recorded"></ul>
+
+      <div id="summary" hidden>
+        <h3 class="recorded-title">Итоги тренировки</h3>
+        <p id="summary-count">Кругов: 0</p>
+        <div id="summary-body"></div>
+      </div>
+
+      <h3 class="recorded-title">История тренировок</h3>
+      <div id="history"></div>
+    </section>
+  </main>
+
+  <script>
+    const TEMPLATES = {
+      'Верх': [
+        'Жим гантелей лежа на горизонтальной скамье',
+        'Тяга в наклоне (Смит)',
+        'Сгибание рук в сидя в тренажере нижний блок',
+        'Жим вверх в тренажере',
+        'Разгибание рук (трицепс)',
+        'Сгибание рук со штангой',
+        'Пресс'
+      ],
+      'Низ': [
+        'Подъем на одной ноге с коврика',
+        'Отведение и разгибание бедра на четвереньках',
+        'Ягодичный мост',
+        'Голень сидя в тренажере'
+      ]
+    };
+    const MAX_ROUNDS = 5;
+    const STORE_KEY = 'workout-history';
+
+    let selectedTemplate = null;
+    let exercises = null;
+    let currentRound = 1;
+    let exerciseIndex = 0;
+    let currentRoundEntries = [];
+    const rounds = [];
+    const lastValues = {};
+
+    function entryLine(entry) {
+      if (entry.status === 'skipped') {
+        return entry.exercise + ': пропущено.';
+      }
+      return entry.exercise + ': ' + entry.weight + ' кг, ' +
+        entry.reps + ' повторений, трудность ' + entry.effort + '.';
+    }
+
+    function journalLine(roundNumber, entry) {
+      const li = document.createElement('li');
+      li.textContent = 'Круг ' + roundNumber + ' • ' + entryLine(entry);
+      document.getElementById('list').appendChild(li);
+    }
+
+    function updateUi() {
+      document.getElementById('round').textContent = currentRound;
+      document.getElementById('active').textContent = exercises[exerciseIndex];
+      prefillActiveExercise();
+    }
+
+    function stepValue(id, delta) {
+      const el = document.getElementById(id);
+      let value = el.value === '' ? 0 : Number(el.value);
+      if (isNaN(value)) {
+        value = 0;
+      }
+      el.value = String(Math.max(0, value + delta));
+    }
+
+    function prefillActiveExercise() {
+      const name = exercises[exerciseIndex];
+      const prev = lastValues[name];
+      document.getElementById('weight').value = prev ? String(prev.weight) : '';
+      document.getElementById('reps').value = prev ? String(prev.reps) : '';
+      const effort = prev ? prev.effort : 5;
+      document.getElementById('diff').value = effort;
+      document.getElementById('effort-value').textContent = effort;
+    }
+
+    function lockInputsAndSet() {
+      document.getElementById('weight').disabled = true;
+      document.getElementById('reps').disabled = true;
+      document.getElementById('diff').disabled = true;
+      document.getElementById('set').disabled = true;
+      document.getElementById('roundfinish').disabled = true;
+      document.querySelectorAll('.stepper-btn').forEach(function (b) { b.disabled = true; });
+    }
+
+    function startTraining(name) {
+      if (exercises) {
+        return;
+      }
+      selectedTemplate = name;
+      exercises = TEMPLATES[name].slice();
+      document.getElementById('template').textContent = name;
+      document.getElementById('msg').hidden = true;
+      document.getElementById('list').style.display = '';
+      document.getElementById('list-title').style.display = '';
+      document.getElementById('picker').style.display = 'none';
+      document.getElementById('weight').disabled = false;
+      document.getElementById('reps').disabled = false;
+      document.getElementById('diff').disabled = false;
+      document.getElementById('set').disabled = false;
+      document.getElementById('roundfinish').disabled = false;
+      document.querySelectorAll('.stepper-btn').forEach(function (b) { b.disabled = false; });
+      updateUi();
+    }
+
+    function closeRound() {
+      for (let i = currentRoundEntries.length; i < exercises.length; i++) {
+        const entry = {
+          exercise: exercises[i],
+          status: 'skipped',
+          weight: null,
+          reps: null,
+          effort: null
+        };
+        currentRoundEntries.push(entry);
+        journalLine(currentRound, entry);
+      }
+
+      rounds.push({ roundNumber: currentRound, entries: currentRoundEntries });
+      currentRoundEntries = [];
+      exerciseIndex = 0;
+
+      if (rounds.length < MAX_ROUNDS) {
+        currentRound++;
+        updateUi();
+      } else {
+        document.getElementById('active').textContent = 'все упражнения завершены';
+        lockInputsAndSet();
+      }
+    }
+
+    function finishApproach() {
+      if (!exercises || rounds.length >= MAX_ROUNDS) {
+        return;
+      }
+
+      const weight = document.getElementById('weight').value.trim();
+      const reps = document.getElementById('reps').value.trim();
+      const diff = document.getElementById('diff').value.trim();
+
+      if (weight === '' || reps === '') {
+        const msg = document.getElementById('msg');
+        msg.textContent = 'Заполните вес и повторения, либо нажмите «Завершить круг», чтобы пропустить оставшиеся упражнения.';
+        msg.hidden = false;
+        return;
+      }
+
+      document.getElementById('msg').hidden = true;
+
+      const entry = {
+        exercise: exercises[exerciseIndex],
+        status: 'completed',
+        weight: Number(weight),
+        reps: Number(reps),
+        effort: Number(diff)
+      };
+
+      lastValues[entry.exercise] = { weight: entry.weight, reps: entry.reps, effort: entry.effort };
+
+      currentRoundEntries.push(entry);
+      journalLine(currentRound, entry);
+
+      if (exerciseIndex < exercises.length - 1) {
+        exerciseIndex++;
+        updateUi();
+      } else {
+        closeRound();
+      }
+    }
+
+    function finishRoundEarly() {
+      if (!exercises || rounds.length >= MAX_ROUNDS) {
+        return;
+      }
+      closeRound();
+      document.getElementById('msg').hidden = true;
+    }
+
+    function finishTraining() {
+      if (!exercises || rounds.length === 0) {
+        document.getElementById('msg').hidden = false;
+        return;
+      }
+
+      document.getElementById('msg').hidden = true;
+
+      document.getElementById('summary-count').textContent = 'Шаблон: ' + selectedTemplate + ' • Кругов: ' + rounds.length;
+      const body = document.getElementById('summary-body');
+      body.textContent = '';
+      renderTable(body, exercises, rounds);
+      document.getElementById('summary').hidden = false;
+
+      const meta = document.querySelectorAll('.meta p');
+      const record = {
+        date: meta[0].textContent.replace('Дата:', '').trim(),
+        type: meta[1].textContent.replace('Тип тренировки:', '').trim(),
+        template: selectedTemplate,
+        finishedAt: new Date().toISOString(),
+        rounds: rounds.map(function (round) {
+          return { roundNumber: round.roundNumber, entries: round.entries.slice() };
+        })
+      };
+
+      const history = getHistory();
+      history.unshift(record);
+      saveHistory(history);
+      renderHistory();
+
+      document.getElementById('weight').disabled = true;
+      document.getElementById('reps').disabled = true;
+      document.getElementById('diff').disabled = true;
+      document.getElementById('set').disabled = true;
+      document.getElementById('roundfinish').disabled = true;
+      document.getElementById('finish').disabled = true;
+      document.querySelectorAll('.stepper-btn').forEach(function (b) { b.disabled = true; });
+
+      const journalList = document.getElementById('list');
+      journalList.textContent = '';
+      journalList.style.display = 'none';
+      document.getElementById('list-title').style.display = 'none';
+    }
+
+    function renderTable(container, exercisesList, roundsList) {
+      const wrap = document.createElement('div');
+      wrap.className = 'table-wrap';
+
+      const table = document.createElement('table');
+      table.className = 'overview';
+
+      const thead = document.createElement('thead');
+      const headRow = document.createElement('tr');
+      const head0 = document.createElement('th');
+      head0.textContent = 'Упражнение';
+      headRow.appendChild(head0);
+      for (const round of roundsList) {
+        const th = document.createElement('th');
+        th.textContent = 'Круг ' + round.roundNumber;
+        headRow.appendChild(th);
+      }
+      thead.appendChild(headRow);
+      table.appendChild(thead);
+
+      const tbody = document.createElement('tbody');
+      for (const name of exercisesList) {
+        const row = document.createElement('tr');
+        const nameCell = document.createElement('td');
+        nameCell.textContent = name;
+        row.appendChild(nameCell);
+        for (const round of roundsList) {
+          const cell = document.createElement('td');
+          const entry = round.entries.find(function (e) { return e.exercise === name; });
+          if (!entry) {
+            cell.textContent = '—';
+          } else if (entry.status === 'skipped') {
+            cell.textContent = 'пропуск';
+          } else {
+            cell.textContent = entry.weight + ' / ' + entry.reps + ' / ' + entry.effort;
+          }
+          row.appendChild(cell);
+        }
+        tbody.appendChild(row);
+      }
+      table.appendChild(tbody);
+      wrap.appendChild(table);
+      container.appendChild(wrap);
+    }
+
+    function getHistory() {
+      try {
+        const raw = localStorage.getItem(STORE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function saveHistory(history) {
+      try {
+        localStorage.setItem(STORE_KEY, JSON.stringify(history));
+      } catch (e) {
+        // Если хранилище недоступно, страница продолжает работать.
+      }
+    }
+
+    function renderHistory() {
+      const box = document.getElementById('history');
+      box.textContent = '';
+
+      const history = getHistory().filter(function (record) {
+        return record && typeof record.template === 'string' &&
+          Array.isArray(record.rounds) && record.rounds.length > 0;
+      });
+
+      if (history.length === 0) {
+        const empty = document.createElement('p');
+        empty.textContent = 'Пока нет завершённых тренировок.';
+        box.appendChild(empty);
+        return;
+      }
+
+      for (const record of history) {
+        const block = document.createElement('div');
+        block.className = 'hist';
+
+        const line = document.createElement('p');
+        line.textContent = record.date + ' • ' + record.template + ' • Кругов: ' + record.rounds.length;
+        block.appendChild(line);
+
+        renderTable(block, record.rounds[0].entries.map(function (e) { return e.exercise; }), record.rounds);
+        box.appendChild(block);
+      }
+    }
+
+    renderHistory();
+  </script>
+</body>
+</html>
